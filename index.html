@@ -1,125 +1,133 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title> نظام حضور وانصراف الطلاب </title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-    body { font-family: 'Tajawal', sans-serif; background-color: #f1f5f9; color: #1e293b; overflow-x: hidden; }
-    
-    .table-container { 
-        max-height: 75vh; 
-        overflow: auto; 
-        border-radius: 16px; 
-        background: white;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        -webkit-overflow-scrolling: touch;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title> نظام حضور وانصراف الطلاب </title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #ffffff; color: #1e293b; overflow-x: hidden; }
+        
+        .table-container { 
+            max-height: 75vh; 
+            overflow: auto; 
+            border-radius: 16px; 
+            background: rgb(255, 255, 255);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            -webkit-overflow-scrolling: touch;
+        }
 
-    table thead th { 
-        position: sticky; 
-        top: 0; 
-        z-index: 30; 
-        background-color: #1e293b; 
-        color: white; 
-        white-space: nowrap; 
-        padding: 12px 8px;
-    }
+        table thead th { 
+            position: sticky; 
+            top: 0; 
+            z-index: 30; 
+            background-color: #1e293b; 
+            color: rgb(63, 155, 201); 
+            white-space: nowrap; 
+            padding: 12px 8px;
+        }
 
-    .student-name-col { 
-        position: sticky; 
-        right: 0; 
-        z-index: 40; 
-        background-color: #ffffff; 
-        min-width: 140px; 
-        max-width: 140px;
-        box-shadow: -4px 0 10px rgba(0,0,0,0.05);
-        font-weight: 700;
-        border-left: 2px solid #f1f5f9;
-    }
+        .student-name-col { 
+            position: sticky; 
+            right: 0; 
+            z-index: 40; 
+            background-color: #ffffff; 
+            min-width: 180px; 
+            max-width: 180px;
+            box-shadow: -4px 0 10px rgba(0,0,0,0.05);
+            font-weight: 700;
+            border-left: 2px solid #f1f5f9;
+        }
 
-    .cell-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 4px; }
-    .time-label { font-size: 8px; font-weight: bold; color: #94a3b8; height: 10px; }
-    .box-cell { 
-        width: 32px; 
-        height: 32px; 
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        border-radius: 8px; 
-        cursor: pointer; 
-        border: 1.5px solid #e2e8f0; 
-        font-size: 12px; 
-        background: #f8fafc; 
-    }
-    .checked { 
-        background-color: #22c55e !important; 
-        color: white !important; 
-        border-color: #16a34a !important; 
-    }
-    
-    #customModal { 
-        display: none; 
-        position: fixed; 
-        inset: 0; 
-        background: rgba(15, 23, 42, 0.75); 
-        align-items: center; 
-        justify-content: center; 
-        z-index: 1000; 
-        backdrop-filter: blur(4px); 
-        padding: 16px;
-    }
+        .index-col {
+            width: 40px;
+            text-align: center;
+            color: #64748b;
+            font-size: 11px;
+            border-left: 1px solid #f1f5f9;
+        }
 
-    .tab-btn { 
-        padding: 14px 10px; 
-        font-weight: 700; 
-        transition: 0.3s; 
-        border-bottom: 3px solid transparent;
-        color: #64748b;
-    }
-    .tab-btn.active { 
-        border-bottom-color: #3b82f6; 
-        color: #3b82f6; 
-        background: #eff6ff; 
-    }
-    
-    .dep-input { 
-        width: 100%; 
-        min-width: 100px; 
-        padding: 8px; 
-        border: 1.5px solid #e2e8f0; 
-        border-radius: 8px; 
-        font-size: 13px;
-    }
+        .cell-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 4px; }
+        .time-label { font-size: 8px; font-weight: bold; color: #94a3b8; height: 10px; }
+        .box-cell { 
+            width: 32px; 
+            height: 32px; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            border: 1.5px solid #e2e8f0; 
+            font-size: 12px; 
+            background: #f8fafc; 
+        }
+        .checked { 
+            background-color: #22c55e !important; 
+            color: white !important; 
+            border-color: #16a34a !important; 
+        }
+        
+        #customModal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(15, 23, 42, 0.75); 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000; 
+            backdrop-filter: blur(4px); 
+            padding: 16px;
+        }
 
-    #toast {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #10b981;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 12px;
-        font-weight: bold;
-        display: none;
-        z-index: 2000;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-    }
+        .tab-btn { 
+            padding: 14px 10px; 
+            font-weight: 700; 
+            transition: 0.3s; 
+            border-bottom: 3px solid transparent;
+            color: #64748b;
+        }
+        .tab-btn.active { 
+            border-bottom-color: #3b82f6; 
+            color: #3b82f6; 
+            background: #eff6ff; 
+        }
+        
+        .dep-input { 
+            width: 100%; 
+            min-width: 100px; 
+            padding: 8px; 
+            border: 1.5px solid #e2e8f0; 
+            border-radius: 8px; 
+            font-size: 13px;
+        }
 
-    @media (max-width: 640px) {
-        .student-name-col { min-width: 110px; max-width: 110px; font-size: 12px; }
-        .box-cell { width: 28px; height: 28px; }
-    }
-</style>
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: none;
+            z-index: 2000;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 640px) {
+            .student-name-col { min-width: 150px; max-width: 150px; font-size: 12px; }
+            .box-cell { width: 28px; height: 28px; }
+        }
+    </style>
 </head>
 <body class="p-2 md:p-6">
 
-<div id="toast">تم تغيير كلمة المرور بنجاح ✅</div>
+<div id="toast">تمت العملية بنجاح ✅</div>
 
 <div class="max-w-full mx-auto">
     <!-- Header -->
@@ -127,14 +135,19 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 id="pageMainTitle" class="text-xl md:text-3xl font-bold text-slate-800">سجل حضور الطلاب</h1>
-                <div id="activeMonthDisplay" class="bg-slate-800 text-blue-400 mt-2 inline-block px-4 py-1 rounded-full font-bold text-xs md:text-sm border border-blue-500/30">
-                    جاري التحميل...
+                <div class="flex items-center gap-2 mt-2">
+                    <div id="activeMonthDisplay" class="bg-slate-800 text-blue-400 px-4 py-1 rounded-full font-bold text-xs md:text-sm border border-blue-500/30">
+                        جاري التحميل...
+                    </div>
+                    <div id="studentsCountDisplay" class="bg-emerald-50 text-emerald-700 px-4 py-1 rounded-full font-bold text-xs md:text-sm border border-emerald-200">
+                        العدد: 0
+                    </div>
                 </div>
             </div>
             <div class="flex flex-wrap gap-2">
                 <input type="text" id="search" placeholder="ابحث عن طالب..." class="flex-1 md:w-64 px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none text-sm"/>
                 <div class="flex gap-2 w-full md:w-auto">
-                    <button id="addStudentBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl font-bold transition-all text-xs">إضافة طالب</button>
+                    <button id="addStudentBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl font-bold transition-all text-xs">إضافة طلاب</button>
                     <button id="settingsBtn" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white py-2 px-4 rounded-xl font-bold transition-all text-xs">الإعدادات</button>
                 </div>
             </div>
@@ -152,8 +165,13 @@
         <table class="w-full border-collapse">
             <thead>
                 <tr>
-                    <th class="student-name-col">اسم الطالب</th>
-                    <script>for(let d=1; d<=30; d++){document.write(`<th class="text-center min-w-[45px] border-r border-slate-700 text-[10px]">${d}</th>`);}</script>
+                    <th class="student-name-col">
+                        <div class="flex items-center">
+                            <span class="w-[40px] text-center border-l border-slate-600 opacity-60">#</span>
+                            <span class="pr-2">اسم الطالب</span>
+                        </div>
+                    </th>
+                    <script>for(let d=1; d<=31; d++){document.write(`<th class="text-center min-w-[45px] border-r border-slate-700 text-[10px]">${d}</th>`);}</script>
                 </tr>
             </thead>
             <tbody id="attendanceBody" class="divide-y divide-slate-100"></tbody>
@@ -165,10 +183,15 @@
         <table class="w-full border-collapse">
             <thead>
                 <tr>
-                    <th class="student-name-col">اسم الطالب</th>
+                    <th class="student-name-col">
+                         <div class="flex items-center">
+                            <span class="w-[40px] text-center border-l border-slate-600 opacity-60">#</span>
+                            <span class="pr-2">اسم الطالب</span>
+                        </div>
+                    </th>
                     <th class="p-4 text-xs font-bold min-w-[120px]">الوجهة (المكان)</th>
                     <th class="p-4 text-xs font-bold min-w-[110px]">رقم جوالك</th>
-                    <th class="p-4 text-xs font-bold min-w-[110px]">رقم جوال مرافق او شخص يتواجد في الوجهة</th>
+                    <th class="p-4 text-xs font-bold min-w-[110px]">رقم جوال مرافق او شخص متواجد في الوجهة</th>
                     <th class="p-4 text-xs font-bold min-w-[90px]">وقت الخروج</th>
                     <th class="p-4 text-xs font-bold min-w-[90px]">وقت العودة</th>
                     <th class="p-4 text-xs font-bold">إجراء</th>
@@ -196,8 +219,32 @@
                 ⚠️ الرمز غير صحيح أو الحقل فارغ
             </div>
 
-            <div id="modalInputContainer" class="hidden mb-4">
+            <!-- Single Inputs -->
+            <div id="modalInputContainer" class="hidden mb-4 space-y-3">
                 <input type="password" id="modalInput" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-center font-bold tracking-widest" placeholder="••••••">
+                <input type="password" id="modalInputConfirm" class="hidden w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-center font-bold tracking-widest" placeholder="تأكيد الرمز ••••••">
+            </div>
+
+            <!-- Multi Student Input (Add) -->
+            <div id="multiStudentContainer" class="hidden mb-4 max-h-[300px] overflow-y-auto border border-slate-200 rounded-xl">
+                <table class="w-full text-sm text-right">
+                    <thead class="bg-slate-50 sticky top-0">
+                        <tr>
+                            <th class="p-2 border-b">#</th>
+                            <th class="p-2 border-b">اسم الطالب رباعي</th>
+                        </tr>
+                    </thead>
+                    <tbody id="multiStudentBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Multi Student Delete (Checkboxes) -->
+            <div id="deleteSelectionContainer" class="hidden mb-4 max-h-[300px] overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-2">
+                <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg mb-2">
+                    <input type="checkbox" id="selectAllStudents" class="w-4 h-4 accent-red-600">
+                    <label for="selectAllStudents" class="text-xs font-bold text-slate-700">تحديد الكل</label>
+                </div>
+                <div id="deleteListBody" class="space-y-1"></div>
             </div>
 
             <div id="modalSelectContainer" class="hidden mb-4">
@@ -205,51 +252,46 @@
             </div>
 
             <div id="settingsContainer" class="hidden space-y-3">
+                <p class="text-[10px] text-red-500 text-center font-bold mb-2"> تنبية⚠️ . هذه الإعدادات خاصة بالإدارة فقط</p>
                 <button onclick="triggerMonthChange()" class="w-full bg-blue-50 text-blue-700 py-3 rounded-xl font-bold text-sm border border-blue-100 hover:bg-blue-100">📅 تحديد الشهر الحالي</button>
                 <button onclick="triggerPasswordChange()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold text-sm hover:bg-slate-900">🔑 تغيير كلمة المرور</button>
-                <button onclick="triggerDeleteStudent()" class="w-full bg-white text-slate-700 py-3 rounded-xl font-bold text-sm border border-slate-200 hover:bg-slate-50">🗑️ حذف اسم طالب</button>
-                
+                <button onclick="triggerMultiDelete()" class="w-full bg-white text-red-600 py-3 rounded-xl font-bold text-sm border border-red-200 hover:bg-red-50">🗑️ حذف طلاب (تحديد متعدد)</button>
                 <div class="space-y-1">
-                    <button onclick="triggerClearAttendance()" class="w-full bg-red-50 text-red-700 py-3 rounded-xl font-bold text-sm border border-red-100 hover:bg-red-100">🧹 مسح السجلات (حضور وانصراف)</button>
-                    <p class="text-[10px] text-red-500 bg-red-50/50 p-2 rounded-lg border border-red-100/50 leading-relaxed text-center">
-                        ⚠️ <strong>تنبيه الإدارة:</strong> هذا الخيار سيؤدي لمسح جميع بيانات الشهر الحالي. يستخدم فقط عند الرغبة في تصفية السجلات لبداية شهر جديد.
-                    </p>
+                    <button onclick="triggerClearAttendance()" class="w-full bg-red-50 text-red-700 py-3 rounded-xl font-bold text-sm border border-red-100 hover:bg-red-100">🧹 مسح السجلات (تصفية شاملة)</button>
+                    <p class="text-[9px] text-slate-400 text-center leading-tight">يُستخدم هذا الزر عند بداية شهر جديد لمسح بيانات الحضور والانصراف معاً.</p>
                 </div>
-
                 <button onclick="triggerPrivacyPolicy()" class="w-full bg-emerald-50 text-emerald-700 py-3 rounded-xl font-bold text-sm border border-emerald-100 hover:bg-emerald-100">🛡️ سياسة الخصوصية</button>
             </div>
 
-           <div id="privacyContainer" class="hidden space-y-4">
-    <div class="bg-slate-50 p-5 rounded-2xl text-slate-600 text-xs leading-relaxed text-right border border-slate-200 shadow-inner">
-        
+           <div id="privacyContainer" class="hidden">
+    <div class="bg-slate-50 p-5 rounded-2xl text-slate-600 text-xs leading-relaxed text-right border border-slate-200">
         <p class="font-bold text-slate-800 mb-3 text-center text-sm">
-            ميثاق الأمان<br>
             ميثاق الخصوصية الرقمي
         </p>
 
         <ul class="space-y-2">
-            <li>✦ يتم تشفير وتخزين كافة البيانات بشكل سحابي متطور لضمان أعلى مستويات الأمان والسرية.</li>
-            <li>✦ النظام مصمم حصراً لإدارة وتنظيم العمليات اللوجستية والحضور والانصراف بفعالية رقمية.</li>
-            <li>✦ نلتزم بعدم مشاركة أو تسريب أي بيانات مدخلة لأي أطراف ثالثة تحت أي ظرف كان.</li>
-            <li>✦ تعتمد التقنية المستخدمة على معايير حديثة تضمن استمرارية الوصول وحماية الخصوصية الفردية.</li>
+            <li>✦ الموقع مخصص لإدارة وتنظيم شؤون داخلية الطالبات فقط.</li>
+            <li>✦ نظام خاص وآمن ولا يمكن الوصول إليه إلا للمصرّح لهم.</li>
+            <li>✦ جميع البيانات محفوظة في قاعدة بيانات مشفّرة ومحمية بالكامل.</li>
+            <li>✦ يتم استخدام تقنيات حماية حديثة لضمان الخصوصية وسلامة المعلومات.</li>
+            <li>✦ لا يُسمح بالوصول أو التعديل على البيانات إلا عبر النظام الرسمي للموقع.</li>
         </ul>
 
-        <div class="mt-6 pt-4 border-t border-slate-200 text-center">
-            <p class="text-blue-600 font-bold text-[13px] tracking-wide">
-                Developed with Passion by<br>
-                <span class="text-base">مهاب تكنولوجي</span>
-            </p>
+        <!-- التوقيع -->
+        <div class="mt-4 text-center text-[11px] text-blue-500/70 tracking-wide italic">
+            Programmer by Muhab<br>
+            رقم التحديث: 1.1.1
         </div>
-
     </div>
 </div>
 </div>
 
 <div id="modalButtons" class="flex gap-3">
     <button id="modalConfirmBtn"
-        class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-200 transition-all">
+        class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm transition-all">
         تأكيد
     </button>
+
     <button id="modalCancelBtn" onclick="closeModal()"
         class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-xl font-bold text-sm transition-all">
         إلغاء
@@ -269,10 +311,12 @@ const loader=document.getElementById("loader");
 const searchInput=document.getElementById("search");
 const modal=document.getElementById("customModal");
 const activeMonthDisplay = document.getElementById('activeMonthDisplay');
+const studentsCountDisplay = document.getElementById('studentsCountDisplay');
 const toast = document.getElementById('toast');
 
 let currentView = 'attendance';
 let studentsList = [];
+let attendanceRecords = []; 
 let pendingAction = null;
 
 const monthsList = ["يناير - 1", "فبراير - 2", "مارس - 3", "أبريل - 4", "مايو - 5", "يونيو - 6", "يوليو - 7", "أغسطس - 8", "سبتمبر - 9", "أكتوبر - 10", "نوفمبر - 11", "ديسمبر - 12"];
@@ -285,6 +329,12 @@ function switchView(view) {
     document.getElementById('tabDep').classList.toggle('active', view === 'departure');
     document.getElementById('pageMainTitle').textContent = (view === 'attendance') ? 'سجل حضور الطلاب' : 'سجل انصراف الطلاب';
     renderData();
+}
+
+function showToast(msg) {
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
 }
 
 function getCurrentTimeFormatted() {
@@ -302,12 +352,9 @@ async function checkAdminPassword(providedPwd) {
         return false;
     }
     const {data} = await sbClient.from("settings").select("value").eq("key_name", "admin_password").single();
-    if(data && data.value === providedPwd) {
-        return true;
-    } else {
-        showErrorOnInput();
-        return false;
-    }
+    if(data && data.value === providedPwd) return true;
+    showErrorOnInput();
+    return false;
 }
 
 function showErrorOnInput(customMsg) {
@@ -317,15 +364,13 @@ function showErrorOnInput(customMsg) {
     document.getElementById('modalInput').classList.add('border-red-500', 'bg-red-50');
     setTimeout(() => {
         errorDiv.classList.add('hidden');
-        errorDiv.textContent = "⚠️ الرمز غير صحيح أو الحقل فارغ";
         document.getElementById('modalInput').classList.remove('border-red-500', 'bg-red-50');
     }, 3000);
 }
 
-function showCustomUI({title, message, type='info', showInput=false, inputType="password", showSelect=false, selectData=[], onConfirm, showSettings=false, showPrivacy=false, hideConfirm=false, hideCancel=false, confirmText="تأكيد"}){
+function showCustomUI({title, message, type='info', showInput=false, inputType="password", showConfirmField=false, showSelect=false, selectData=[], onConfirm, showSettings=false, showPrivacy=false, showMultiInput=false, multiCount=0, showDeleteList=false, hideConfirm=false, hideCancel=false, confirmText="تأكيد"}){
     document.getElementById('modalTitle').textContent=title;
     document.getElementById('modalMessage').innerHTML=message;
-    document.getElementById('errorMsg').classList.add('hidden');
     const iconDiv=document.getElementById('modalIcon');
     const confirmBtn = document.getElementById('modalConfirmBtn');
     const cancelBtn = document.getElementById('modalCancelBtn');
@@ -334,14 +379,51 @@ function showCustomUI({title, message, type='info', showInput=false, inputType="
     confirmBtn.style.display = hideConfirm ? "none" : "block";
     cancelBtn.style.display = hideCancel ? "none" : "block";
     
-    ['settingsContainer', 'privacyContainer', 'modalInputContainer', 'modalSelectContainer'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    ['settingsContainer', 'privacyContainer', 'modalInputContainer', 'modalSelectContainer', 'multiStudentContainer', 'deleteSelectionContainer'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    document.getElementById('modalInputConfirm').classList.add('hidden');
     
     if(type==='success') { iconDiv.className="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4 bg-green-100 text-green-600"; iconDiv.innerHTML='✔'; }
     else if(type==='danger') { iconDiv.className="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4 bg-red-100 text-red-600"; iconDiv.innerHTML='⚠'; }
     else if(type==='shield') { iconDiv.className="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4 bg-emerald-100 text-emerald-600"; iconDiv.innerHTML='🛡️'; }
     else { iconDiv.className="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4 bg-blue-100 text-blue-600"; iconDiv.innerHTML='ℹ'; }
 
-    if(showInput) { document.getElementById('modalInputContainer').classList.remove('hidden'); document.getElementById('modalInput').type=inputType; document.getElementById('modalInput').value=""; }
+    if(showInput) { 
+        document.getElementById('modalInputContainer').classList.remove('hidden'); 
+        document.getElementById('modalInput').type=inputType; 
+        document.getElementById('modalInput').value=""; 
+        if(showConfirmField) {
+            document.getElementById('modalInputConfirm').classList.remove('hidden');
+            document.getElementById('modalInputConfirm').type=inputType;
+            document.getElementById('modalInputConfirm').value="";
+        }
+    }
+
+    if(showMultiInput) {
+        const body = document.getElementById('multiStudentBody');
+        body.innerHTML = "";
+        for(let i=1; i<=multiCount; i++) {
+            body.innerHTML += `<tr class="border-b"><td class="p-2 bg-slate-50 text-center font-bold text-slate-400">${i}</td><td class="p-1"><input type="text" class="multi-name-input w-full p-2 outline-none border-0 focus:bg-blue-50" placeholder="اسم الطالب..."></td></tr>`;
+        }
+        document.getElementById('multiStudentContainer').classList.remove('hidden');
+    }
+
+    if(showDeleteList) {
+        const listBody = document.getElementById('deleteListBody');
+        listBody.innerHTML = studentsList.map((s, idx) => `
+            <div class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg transition-colors border-b border-slate-50">
+                <input type="checkbox" value="${s.id}" class="student-delete-checkbox w-4 h-4 accent-red-600">
+                <span class="text-[10px] bg-slate-100 px-1.5 rounded text-slate-400">${idx+1}</span>
+                <span class="text-xs font-medium text-slate-700">${s.name}</span>
+            </div>
+        `).join("");
+        document.getElementById('deleteSelectionContainer').classList.remove('hidden');
+        
+        document.getElementById('selectAllStudents').checked = false;
+        document.getElementById('selectAllStudents').onchange = (e) => {
+            document.querySelectorAll('.student-delete-checkbox').forEach(cb => cb.checked = e.target.checked);
+        };
+    }
+
     if(showSelect) { 
         document.getElementById('modalSelectContainer').classList.remove('hidden'); 
         document.getElementById('modalSelect').innerHTML = selectData.map(s => `<option value="${s.id||s}">${s.name||s}</option>`).join("");
@@ -351,73 +433,113 @@ function showCustomUI({title, message, type='info', showInput=false, inputType="
 
     modal.style.display="flex";
     pendingAction = async () => {
-        const val = showSelect ? document.getElementById('modalSelect').value : document.getElementById('modalInput').value;
-        if(onConfirm) await onConfirm(val);
+        let val;
+        if(showMultiInput) {
+            val = Array.from(document.querySelectorAll('.multi-name-input')).map(inp => inp.value.trim()).filter(v => v !== "");
+        } else if(showDeleteList) {
+            val = Array.from(document.querySelectorAll('.student-delete-checkbox:checked')).map(cb => cb.value);
+        } else {
+            val = showSelect ? document.getElementById('modalSelect').value : document.getElementById('modalInput').value;
+        }
+        const confirmVal = document.getElementById('modalInputConfirm').value;
+        if(onConfirm) await onConfirm(val, confirmVal);
     };
 }
 
 function closeModal(){ modal.style.display="none"; pendingAction=null; }
 
-function showToast() {
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 3000);
-}
-
-document.getElementById('modalConfirmBtn').onclick= async ()=>{ 
-    if(pendingAction) await pendingAction(); 
-};
+document.getElementById('modalConfirmBtn').onclick= async ()=>{ if(pendingAction) await pendingAction(); };
 
 async function loadAllData() {
     loader.classList.remove('hidden');
-    const {data:students} = await sbClient.from("students").select("*").order("name");
-    studentsList = students || [];
-    const {data} = await sbClient.from("settings").select("value").eq("key_name", "active_month").single();
-    if(data) activeMonthDisplay.textContent = data.value;
-    await renderData();
+    const [studentsRes, attendanceRes, settingsRes] = await Promise.all([
+        sbClient.from("students").select("*").order("name"),
+        sbClient.from("attendance").select("*"),
+        sbClient.from("settings").select("value").eq("key_name", "active_month").single()
+    ]);
+
+    studentsList = studentsRes.data || [];
+    attendanceRecords = attendanceRes.data || [];
+    if(settingsRes.data) activeMonthDisplay.textContent = settingsRes.data.value;
+    studentsCountDisplay.textContent = `عدد الطلاب الان: ${studentsList.length}`;
+
+    renderData();
     loader.classList.add('hidden');
 }
 
-async function renderData() {
+function renderData() {
     const filter = searchInput.value.toLowerCase();
     const filtered = studentsList.filter(s => s.name.toLowerCase().includes(filter));
 
     if(currentView === 'attendance') {
         attBody.innerHTML = "";
-        for(let student of filtered) {
+        filtered.forEach((student, index) => {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td class="student-name-col text-right pr-4">${student.name}</td>`;
-            const {data:att} = await sbClient.from("attendance").select("day, check_time").eq("student_id", student.id);
+            tr.innerHTML = `
+                <td class="student-name-col pr-0">
+                    <div class="flex items-center">
+                        <span class="index-col">${index + 1}</span>
+                        <span class="pr-2">${student.name}</span>
+                    </div>
+                </td>`;
+            const studentAtt = attendanceRecords.filter(a => a.student_id === student.id);
             const attMap = {};
-            if(att) att.forEach(a => attMap[a.day] = a.check_time);
-            for(let d=1; d<=30; d++) {
-                const isChecked = !!attMap[d];
-                tr.innerHTML += `<td class="p-0 border-r border-slate-100"><div class="cell-wrapper"><span class="time-label">${attMap[d] || ''}</span><div onclick="handleToggleAtt(this, '${student.id}', ${d}, '${student.name}')" class="box-cell ${isChecked?'checked':''}"> ${isChecked?'✔':''} </div></div></td>`;
+            studentAtt.forEach(a => attMap[a.day] = a.check_time);
+            for(let d=1; d<=31; d++) {
+                const time = attMap[d] || '';
+                const isChecked = !!time;
+                tr.innerHTML += `<td class="p-0 border-r border-slate-100"><div class="cell-wrapper"><span class="time-label" id="time-${student.id}-${d}">${time}</span><div onclick="handleToggleAtt(this, '${student.id}', ${d}, '${student.name}')" class="box-cell ${isChecked?'checked':''}" id="box-${student.id}-${d}">${isChecked?'✔':''}</div></div></td>`;
             }
             attBody.appendChild(tr);
-        }
+        });
     } else {
         depBody.innerHTML = "";
-        for(let student of filtered) {
-            const {data:dep} = await sbClient.from("departures").select("*").eq("student_id", student.id).single();
-            const d = dep || { destination:'', phone:'', relative_phone:'', out_time:'', return_time:'' };
+        filtered.forEach(async (student, index) => {
+            const {data:d} = await sbClient.from("departures").select("*").eq("student_id", student.id).single();
+            const dep = d || { destination:'', phone:'', relative_phone:'', out_time:'', return_time:'' };
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td class="student-name-col text-right pr-4">${student.name}</td><td class="p-2"><input id="dest-${student.id}" value="${d.destination}" class="dep-input" placeholder="..."></td><td class="p-2"><input id="ph-${student.id}" value="${d.phone}" class="dep-input" placeholder="..."></td><td class="p-2"><input id="rel-${student.id}" value="${d.relative_phone}" class="dep-input" placeholder="..."></td><td class="p-2"><input id="out-${student.id}" value="${d.out_time}" class="dep-input" placeholder="..."></td><td class="p-2"><input id="ret-${student.id}" value="${d.return_time}" class="dep-input" placeholder="..."></td><td class="p-2 text-center"><button onclick="saveDeparture('${student.id}')" class="bg-green-600 text-white px-4 py-1.5 rounded-lg font-bold text-xs">حفظ</button></td>`;
+            tr.innerHTML = `
+                <td class="student-name-col pr-0">
+                    <div class="flex items-center">
+                        <span class="index-col">${index + 1}</span>
+                        <span class="pr-2">${student.name}</span>
+                    </div>
+                </td>
+                <td class="p-2"><input id="dest-${student.id}" value="${dep.destination}" class="dep-input" placeholder="..."></td>
+                <td class="p-2"><input id="ph-${student.id}" value="${dep.phone}" class="dep-input" placeholder="..."></td>
+                <td class="p-2"><input id="rel-${student.id}" value="${dep.relative_phone}" class="dep-input" placeholder="..."></td>
+                <td class="p-2"><input id="out-${student.id}" value="${dep.out_time}" class="dep-input" placeholder="..."></td>
+                <td class="p-2"><input id="ret-${student.id}" value="${dep.return_time}" class="dep-input" placeholder="..."></td>
+                <td class="p-2 text-center"><button onclick="saveDeparture('${student.id}')" class="bg-green-600 text-white px-4 py-1.5 rounded-lg font-bold text-xs">حفظ</button></td>`;
             depBody.appendChild(tr);
-        }
+        });
     }
 }
 
 async function handleToggleAtt(box, sid, day, sname) {
     const isRemoving = box.classList.contains('checked');
+    const timeLabel = document.getElementById(`time-${sid}-${day}`);
     showCustomUI({
         title: isRemoving ? 'إلغاء الحضور' : 'تسجيل حضور',
         message: `هل تريد تعديل حالة (${sname})؟`,
         type: isRemoving ? 'danger' : 'success',
         onConfirm: async () => {
-            if(isRemoving) { await sbClient.from("attendance").delete().eq("student_id", sid).eq("day", day); } 
-            else { await sbClient.from("attendance").upsert({ student_id: sid, day: day, status: 'حضور', check_time: getCurrentTimeFormatted() }); }
             closeModal();
-            renderData();
+            const nowTime = getCurrentTimeFormatted();
+            if(isRemoving) {
+                box.classList.remove('checked'); box.innerHTML = ""; timeLabel.textContent = "";
+            } else {
+                box.classList.add('checked'); box.innerHTML = "✔"; timeLabel.textContent = nowTime;
+            }
+            try {
+                if(isRemoving) {
+                    await sbClient.from("attendance").delete().eq("student_id", sid).eq("day", day);
+                    attendanceRecords = attendanceRecords.filter(a => !(a.student_id === sid && a.day === day));
+                } else {
+                    await sbClient.from("attendance").upsert({ student_id: sid, day: day, status: 'حضور', check_time: nowTime });
+                    attendanceRecords.push({ student_id: sid, day: day, status: 'حضور', check_time: nowTime });
+                }
+            } catch (err) { console.error(err); }
         }
     });
 }
@@ -431,104 +553,107 @@ async function saveDeparture(sid) {
         out_time: document.getElementById(`out-${sid}`).value,
         return_time: document.getElementById(`ret-${sid}`).value
     };
-    loader.classList.remove('hidden');
     await sbClient.from("departures").upsert(payload, {onConflict: 'student_id'});
-    loader.classList.add('hidden');
+    showToast("تم حفظ بيانات الانصراف");
 }
 
 function triggerMonthChange() {
-    showCustomUI({title:'تحقق', message:'أدخل الرمز:', showInput:true, onConfirm: async (pwd) => {
+    showCustomUI({title:'تحقق', message:'أدخل الرمز الإداري:', showInput:true, onConfirm: async (pwd) => {
         if(await checkAdminPassword(pwd)) {
-            setTimeout(() => showCustomUI({title:'تغيير الشهر', message:'اختر:', showSelect:true, selectData:monthsList, onConfirm: async (m) => {
+            setTimeout(() => showCustomUI({title:'تغيير الشهر', message:'اختر الشهر المراد تفعيله:', showSelect:true, selectData:monthsList, onConfirm: async (m) => {
                 await sbClient.from("settings").update({value: m}).eq("key_name", "active_month");
                 activeMonthDisplay.textContent = m;
-                closeModal();
+                closeModal(); showToast("تم تغيير الشهر بنجاح");
             }}), 300);
-        }
-    }});
-}
-
-function triggerDeleteStudent() {
-    showCustomUI({title:'حذف نهائي', message:'أدخل الرمز لحذف الطالب:', showInput:true, onConfirm: async (pwd) => {
-        if(await checkAdminPassword(pwd)) {
-            setTimeout(() => showCustomUI({title:'اختر', message:'سيتم مسح كل شيء يخص الطالب:', showSelect:true, selectData:studentsList, type:'danger', onConfirm: async (sid) => {
-                await sbClient.from("attendance").delete().eq("student_id", sid);
-                await sbClient.from("departures").delete().eq("student_id", sid);
-                await sbClient.from("students").delete().eq("id", sid);
-                closeModal();
-                loadAllData();
-            }}), 300);
-        }
-    }});
-}
-
-function triggerClearAttendance() {
-    showCustomUI({title:'مسح السجلات', message:'أدخل الرمز للمتابعة:', showInput:true, type:'danger', onConfirm: async (pwd) => {
-        if(await checkAdminPassword(pwd)) {
-            // المرحلة الثانية: تأكيد نهائي
-            setTimeout(() => {
-                showCustomUI({
-                    title: 'تأكيد نهائي',
-                    message: '<span class="text-red-600 font-bold">هل أنت متأكد حقاً؟</span><br>سيتم حذف جميع سجلات الحضور والانصراف نهائياً ولا يمكن استعادتها.',
-                    type: 'danger',
-                    confirmText: 'نعم، مسح الكل',
-                    onConfirm: async () => {
-                        await sbClient.from("attendance").delete().neq("status", "none");
-                        await sbClient.from("departures").delete().neq("destination", "none");
-                        closeModal();
-                        renderData();
-                    }
-                });
-            }, 300);
         }
     }});
 }
 
 function triggerPasswordChange() {
-    showCustomUI({title:'تغيير الرمز', message:'أدخل الرمز الحالي أولاً:', showInput:true, onConfirm: async (old) => {
-        if(await checkAdminPassword(old)) {
+    showCustomUI({title:'تغيير الرمز', message:'أدخل الرمز الحالي أولاً:', showInput:true, onConfirm: async (pwd) => {
+        if(await checkAdminPassword(pwd)) {
             setTimeout(() => showCustomUI({
-                title:'الرمز الجديد', 
-                message:'أدخل الرمز الجديد:', 
+                title:'رمز جديد', 
+                message:'أدخل الرمز الجديد وأكده بالأسفل:', 
                 showInput:true, 
-                hideCancel: true, 
-                confirmText: "التالي",
-                onConfirm: async (n1) => {
-                    if(!n1 || n1.trim() === "") {
-                        showErrorOnInput("⚠️ لا يمكن ترك الحقل فارغاً");
-                        return;
-                    }
-                    setTimeout(() => showCustomUI({
-                        title:'تأكيد الرمز',
-                        message:'أدخل الرمز الجديد مرة أخرى للتأكيد:',
-                        showInput:true,
-                        hideCancel: true,
-                        confirmText: "حفظ نهائي",
-                        onConfirm: async (n2) => {
-                            if(n1.trim() !== n2.trim()) {
-                                showErrorOnInput("⚠️ الرموز غير متطابقة! حاول مرة أخرى");
-                                return;
-                            }
-                            await sbClient.from("settings").update({value: n1.trim()}).eq("key_name", "admin_password");
-                            showToast();
-                            showCustomUI({title:'الإعدادات', message:'', showSettings:true, hideConfirm:true});
-                        }
-                    }), 300);
+                inputType:'text', 
+                showConfirmField:true, 
+                onConfirm: async (newPwd, confirmPwd) => {
+                    if(!newPwd || newPwd.length < 4) { showErrorOnInput("الرمز قصير جداً"); return; }
+                    if(newPwd !== confirmPwd) { showErrorOnInput("الرمزان غير متطابقين!"); return; }
+                    await sbClient.from("settings").update({value: newPwd}).eq("key_name", "admin_password");
+                    closeModal(); showToast("تم تغيير كلمة المرور بنجاح ✅");
+            }}), 300);
+        }
+    }});
+}
+
+function triggerMultiDelete() {
+    showCustomUI({title:'حذف متعدد', message:'أدخل الرمز الإداري للمتابعة:', showInput:true, onConfirm: async (pwd) => {
+        if(await checkAdminPassword(pwd)) {
+            setTimeout(() => showCustomUI({
+                title:'تحديد الطلاب للحذف', 
+                message:'يرجى تحديد الأسماء المراد حذفها من النظام نهائياً:', 
+                showDeleteList:true, 
+                type:'danger',
+                confirmText: 'حذف المحدد',
+                onConfirm: async (ids) => {
+                    if(!ids || ids.length === 0) { closeModal(); return; }
+                    loader.classList.remove('hidden');
+                    await sbClient.from("students").delete().in("id", ids);
+                    closeModal();
+                    loadAllData();
+                    showToast(`تم حذف ${ids.length} طالب بنجاح`);
                 }
             }), 300);
         }
     }});
 }
 
-function triggerPrivacyPolicy() { showCustomUI({title:'الخصوصية', message:'', type:'shield', showPrivacy:true, hideConfirm:true}); }
+function triggerClearAttendance() {
+    showCustomUI({title:'تصفية السجلات', message:'أدخل الرمز للمتابعة:', showInput:true, type:'danger', onConfirm: async (pwd) => {
+        if(await checkAdminPassword(pwd)) {
+            setTimeout(() => showCustomUI({
+                title: 'تأكيد التصفية الشاملة',
+                message: 'سيتم مسح جميع سجلات الحضور وأيضاً بيانات سجل الانصراف لجميع الطلاب استعداداً لبداية شهر جديد. هل أنت متأكد؟',
+                type: 'danger',
+                onConfirm: async () => {
+                    const p1 = sbClient.from("attendance").delete().neq("status", "none");
+                    const p2 = sbClient.from("departures").delete().neq("destination", "none");
+                    await Promise.all([p1, p2]);
+                    closeModal(); loadAllData(); showToast("تم تصفير جميع السجلات بنجاح");
+                }
+            }), 300);
+        }
+    }});
+}
 
-document.getElementById("settingsBtn").onclick = () => showCustomUI({title:'الإعدادات', message:'', showSettings:true, hideConfirm:true});
+function triggerPrivacyPolicy() {
+    showCustomUI({ title: 'سياسة الخصوصية', message: 'معلومات حول حماية بياناتك:', type: 'shield', showPrivacy: true, confirmText: 'فهمت', hideCancel: true, onConfirm: () => closeModal() });
+}
+
+document.getElementById("settingsBtn").onclick = () => showCustomUI({title:'إعدادات النظام', message:'إدارة العمليات الإدارية:', showSettings:true, hideConfirm:true});
 
 document.getElementById("addStudentBtn").onclick = () => {
-    showCustomUI({title:'إضافة طالب', message:'أدخل الرمز:', showInput:true, onConfirm: async (pwd) => {
+    showCustomUI({title:'إضافة طلاب', message:'أدخل الرمز الإداري للمتابعة:', showInput:true, onConfirm: async (pwd) => {
         if(await checkAdminPassword(pwd)) {
-            setTimeout(() => showCustomUI({title:'الاسم', message:'أدخل الاسم:', showInput:true, inputType:'text', onConfirm: async (name) => {
-                if(name.trim()) { await sbClient.from("students").insert({name: name.trim()}); closeModal(); loadAllData(); }
+            setTimeout(() => showCustomUI({title:'كم عدد الطلاب؟', message:'حدد عدد الطلاب المراد إضافتهم الآن:', showInput:true, inputType:'number', onConfirm: (count) => {
+                const num = parseInt(count);
+                if(isNaN(num) || num <= 0) { showErrorOnInput("يرجى إدخال عدد صحيح"); return; }
+                setTimeout(() => showCustomUI({
+                    title:'بيانات الطلاب الجدد', 
+                    message:'يرجى إدخال الأسماء في الجدول أدناه:', 
+                    showMultiInput:true, 
+                    multiCount:num,
+                    confirmText: 'حفظ الكل',
+                    onConfirm: async (namesArray) => {
+                        if(namesArray.length === 0) { closeModal(); return; }
+                        loader.classList.remove('hidden');
+                        const dataToInsert = namesArray.map(n => ({ name: n }));
+                        await sbClient.from("students").insert(dataToInsert);
+                        closeModal(); loadAllData(); showToast(`تمت إضافة ${namesArray.length} طالب بنجاح`);
+                    }
+                }), 300);
             }}), 300);
         }
     }});
@@ -538,5 +663,4 @@ searchInput.oninput = () => renderData();
 window.onload = loadAllData;
 </script>
 </body>
-
 </html>
