@@ -123,8 +123,37 @@
             .student-name-col { min-width: 150px; max-width: 150px; font-size: 12px; }
             .box-cell { width: 28px; height: 28px; }
         }
+        /* Overlay */
+#intro-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 100000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease-in-out;
+    overflow: hidden;
+}
+
+/* Canvas */
+#intro-canvas {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    display: block;
+}
+
+/* Optional: لإظهار أي نص ثابت في وسط الشاشة أثناء التطوير */
+/* #intro-text { position: absolute; color: white; font-size: 48px; } */
+
     </style>
 </head>
+<div id="intro-overlay">
+    <canvas id="intro-canvas"></canvas>
+</div>
+
 <body class="p-2 md:p-6">
 
 <div id="toast">تمت العملية بنجاح ✅</div>
@@ -304,6 +333,128 @@
 const SUPABASE_URL="https://uobfgucxxvxfxljrfwwk.supabase.co";
 const SUPABASE_KEY="sb_publishable_lxOLW0vNtZDCtd4X-2UgiQ_4g60N8Kn";
 const sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const canvas = document.getElementById('intro-canvas');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('intro-overlay');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+let particles = [];
+
+// جزيئات
+class Particle {
+    constructor(x, y) {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.destX = x;
+        this.destY = y;
+        this.vx = (Math.random() - 0.5) * 30;
+        this.vy = (Math.random() - 0.5) * 30;
+        this.acc = 0.95;
+        this.isExploding = false;
+        this.color = 'white';
+    }
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    update() {
+        if (!this.isExploding) {
+            this.x += (this.destX - this.x) * 0.08;
+            this.y += (this.destY - this.y) * 0.08;
+        } else {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vx *= this.acc;
+            this.vy *= this.acc;
+        }
+    }
+}
+
+// رسم كلمة WELCOME وتحويلها إلى نقاط
+function initParticles() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const fontSize = Math.min(canvas.width / 6, 120);
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("WELCOME", canvas.width / 2, canvas.height / 2);
+
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    for (let y = 0; y < canvas.height; y += 4) {
+        for (let x = 0; x < canvas.width; x += 4) {
+            if (data[(y * canvas.width + x) * 4 + 3] > 128) {
+                particles.push(new Particle(x, y));
+            }
+        }
+    }
+}
+
+// نقاط كلمة "مرحباً بكم"
+function getArabicPoints() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const fontSize = Math.min(canvas.width / 6, 120);
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("مرحباً بكم", canvas.width / 2, canvas.height / 2);
+    
+    const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    let points = [];
+    for(let y=0;y<canvas.height;y+=4){
+        for(let x=0;x<canvas.width;x+=4){
+            if(data[(y*canvas.width + x)*4 +3]>128){
+                points.push({x,y});
+            }
+        }
+    }
+    return points;
+}
+
+// التحريك
+function animate() {
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+}
+
+// تسلسل الانفجار والتحول
+initParticles();
+animate();
+
+setTimeout(() => {
+    particles.forEach(p => p.isExploding = true);
+
+    const nextPoints = getArabicPoints();
+
+    setTimeout(() => {
+        particles.forEach((p,i) => {
+            p.isExploding = false;
+            if(nextPoints[i]){
+                p.destX = nextPoints[i].x;
+                p.destY = nextPoints[i].y;
+                p.color = '#3b82f6'; // لون مرحبا بكم
+            } else {
+                p.destX = Math.random() * canvas.width;
+                p.destY = -100;
+            }
+        });
+    },800);
+},2500);
+
+// إخفاء الشاشة بعد 5.5 ثواني
+setTimeout(() => {
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.remove(); document.body.style.overflow = 'auto'; }, 1000);
+},5500);
 
 const attBody=document.getElementById("attendanceBody");
 const depBody=document.getElementById("departureBody");
